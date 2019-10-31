@@ -118,6 +118,7 @@ check_for sed
 check_for shasum
 check_for go
 check_for golangci-lint
+check_for goimports
 check_go_version
 check_go_env
 
@@ -128,6 +129,7 @@ SHASUM := ${tools[shasum]}
 GO := ${tools[go]}
 GOVERSION := $GO_VERSION
 LINTER := ${tools[golangci-lint]}
+GOIMPORTS := ${tools[goimports]}
 EOF
 
 echo "Environment configuration written to .env"

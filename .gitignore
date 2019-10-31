@@ -12,6 +12,6 @@
 *.out
 
 .env
-collector
-visualizer
 
+/collector
+/visualizer

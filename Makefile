@@ -8,14 +8,14 @@ VERSION := $(shell git describe --always --dirty --tags 2>/dev/null || echo "und
 all: $(COLLECTOR) $(VISUALIZER)
 
 fmt:
-	$(GO) fmt ./cmd/... ./pkg/...
-
+	GO111MODULE=on $(GO) fmt ./cmd/... ./pkg/...
+	GO111MODULE=on $(GOIMPORTS) -w ./cmd ./pkg
 vet:
-	$(GO) vet ./cmd/... ./pkg/...
+	GO111MODULE=on $(GO) vet ./cmd/... ./pkg/...
 
 lint:
 	@ echo "\033[36mLinting code\033[0m"
-	$(LINTER) run --disable-all \
+	GO111MODULE=on $(LINTER) run --disable-all \
                 --exclude-use-default=false \
                 --enable=govet \
                 --enable=ineffassign \
@@ -31,12 +31,15 @@ lint:
 
 
 $(COLLECTOR): fmt vet lint
-	$(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/collector
+	GO111MODULE=on $(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/collector
 
 $(VISUALIZER): fmt vet lint
-	$(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/visualizer
+	GO111MODULE=on $(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/visualizer
 
 clean:
 	rm -f $(COLLECTOR) $(VISUALIZER)
 
-.PHONY: all clean fmt vet lint
+distclean: clean
+	rm -f ./env
+
+.PHONY: all clean distclean fmt vet lint
