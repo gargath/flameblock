@@ -5,6 +5,8 @@ VISUALIZER := visualizer
 
 VERSION := $(shell git describe --always --dirty --tags 2>/dev/null || echo "undefined")
 
+IMG_PREFIX := flameblock
+
 all: $(COLLECTOR) $(VISUALIZER)
 
 fmt:
@@ -36,10 +38,16 @@ $(COLLECTOR): fmt vet lint
 $(VISUALIZER): fmt vet lint
 	GO111MODULE=on $(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/visualizer
 
+docker-build: fmt vet lint
+	docker build --build-arg VERSION=${VERSION} -t ${IMG_PREFIX}-collector:${VERSION} -f deploy/docker/collector/Dockerfile .
+	@echo "\033[36mBuilt ${IMG_PREFIX}-collector:${VERSION}\033[0m"
+	docker build --build-arg VERSION=${VERSION} -t ${IMG_PREFIX}-visualizer:${VERSION} -f deploy/docker/visualizer/Dockerfile .
+	@echo "\033[36mBuilt ${IMG_PREFIX}-visualizer:${VERSION}\033[0m"
+
 clean:
 	rm -f $(COLLECTOR) $(VISUALIZER)
 
 distclean: clean
 	rm -f ./env
 
-.PHONY: all clean distclean fmt vet lint
+.PHONY: all clean distclean fmt vet lint docker-build
