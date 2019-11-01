@@ -5,11 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-redis/redis"
+
 	"github.com/gargath/flameblock/pkg/api"
 )
 
 // Server handles the incoming webhooks
-type Server struct{}
+type Server struct {
+	Config Configuration
+	redis  *redis.Client
+}
 
 func (s *Server) hook(rw http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
@@ -28,7 +33,36 @@ func (s *Server) hook(rw http.ResponseWriter, req *http.Request) {
 
 // Start will spin up the server and handle incoming webhooks
 func (s *Server) Start() error {
+
+	client, err := redisClientFromConfig(s.Config)
+	if err != nil {
+		return fmt.Errorf("Failed to connect to Redis: %v", err)
+	}
+	s.redis = client
+
 	http.HandleFunc("/hook", s.hook)
-	err := http.ListenAndServe(":8000", nil)
-	return err
+	err = http.ListenAndServe(":8000", nil)
+	return fmt.Errorf("Error during ListenAndServe: %v", err)
+}
+
+func redisClientFromConfig(c Configuration) (*redis.Client, error) {
+	var r *redis.Client
+	if c.UseSentinel {
+		r = redis.NewFailoverClient(&redis.FailoverOptions{
+			MasterName:    c.SentinelMaster,
+			SentinelAddrs: c.SentinelAddrs,
+		})
+	} else {
+		r = redis.NewClient(&redis.Options{
+			Addr:     c.RedisAddr,
+			Password: "",
+			DB:       0,
+		})
+	}
+	pong, err := r.Ping().Result()
+	if err != nil {
+		return nil, fmt.Errorf("Failed to connect to Redis: %v", err)
+	}
+	fmt.Printf("Connected to Redis: Ping <> %v\n", pong)
+	return r, nil
 }
