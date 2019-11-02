@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"strings"
 
 	"github.com/gobuffalo/packr/v2"
 )
@@ -19,19 +18,18 @@ func buildHTTPHandlers(box *packr.Box) {
 
 	list := box.List()
 	for index := range list {
-
 		path := list[index]
 		url := path
-		if strings.HasSuffix(url, "index.html") {
-			url = strings.TrimSuffix(url, "index.html")
-		}
 		url = "/" + url
-
+		fmt.Printf("Registering handler for %s\n", url)
 		http.HandleFunc(url, func(writer http.ResponseWriter, request *http.Request) {
 			writer.Header().Add("Content-type", extensionToContentType[filepath.Ext(path)])
-			bytes, err := box.Find(path)
+			fmt.Printf("Finding: %s\n", request.URL.Path)
+			bytes, err := box.Find(request.URL.Path)
+			fmt.Printf("Found: %d bytes\n", len(bytes))
 			if err != nil {
 				fmt.Printf("Error finding path %s in box: %v", path, err)
+				return
 			}
 			_, _ = writer.Write(bytes)
 		})

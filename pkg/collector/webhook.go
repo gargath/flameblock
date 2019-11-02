@@ -24,6 +24,7 @@ func (s *Server) hook(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	fmt.Printf("Handling Hook (Blocked For: %d)\n", hook.BlockedFor)
+	fmt.Printf("Stack:\n%v\n", hook.Stack)
 	go s.transformAndStore(hook.Stack, hook.BlockedFor)
 	rw.WriteHeader(http.StatusNoContent)
 }

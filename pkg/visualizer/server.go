@@ -29,6 +29,16 @@ func (s *Server) Start() error {
 	box := packr.New("static", "../../assets")
 
 	buildHTTPHandlers(box)
+
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path == "/" {
+			writer.Header().Set("Location", "/index.html")
+			writer.WriteHeader(http.StatusMovedPermanently)
+		} else {
+			writer.WriteHeader(http.StatusNotFound)
+		}
+	})
+
 	err = http.ListenAndServe(s.Config.BindAddr, nil)
 	return fmt.Errorf("Error during ListenAndServe: %v", err)
 }

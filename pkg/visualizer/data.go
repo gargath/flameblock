@@ -25,45 +25,56 @@ func (s *Server) flamedata(rw http.ResponseWriter, req *http.Request) {
 	for {
 		var keys []string
 		var values []interface{}
-		var entries = make(map[string]interface{})
 		var err error
 		keys, cursor, err = s.redis.Scan(cursor, "*", 5).Result()
-		if cursor == 0 {
-			break
-		}
 		if err != nil {
 			fmt.Printf("Error from Scan: %v\n", err)
 			// Log error and return 500
 		}
-		values, err = s.redis.MGet(keys...).Result()
-		if err != nil {
-			fmt.Printf("Error from MGet: %v\n", err)
-			// Log error and return 500
-		}
+		if len(keys) > 0 {
 
-		for i, key := range keys {
-			entries[key] = values[i]
+			values, err = s.redis.MGet(keys...).Result()
+			if err != nil {
+				fmt.Printf("Error from MGet: %v\n", err)
+				// Log error and return 500
+			}
+			fmt.Printf("Processing %d keys\n", len(keys))
+			for i, key := range keys {
+				fmt.Printf("Merging key %s with value %v\n", key, values[i])
+				flamedata = merge(flamedata, key, values[i])
+			}
 		}
-		flamedata = merge(flamedata, entries)
+		if cursor == 0 {
+			break
+		}
+		//		flamedata = merge(flamedata, entries)
 
 	}
+	var total int64
+	for _, c := range flamedata.Children {
+		total += c.Value
+	}
+	flamedata.Value = total
+
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
 	json.NewEncoder(rw).Encode(flamedata)
 }
 
-func merge(root *api.Node, data map[string]interface{}) *api.Node {
-	for k, v := range data {
-		currentNode := root
-		parsedval, _ := strconv.ParseInt(v.(string), 10, 32)
-		stackLines := strings.Split(k, "*")
-		for i, stackLine := range stackLines {
-			nodeForLine := findNode(currentNode, stackLine)
-			if i == len(stackLines)-1 {
-				nodeForLine.Value = parsedval
-			}
-			currentNode = nodeForLine
+//func merge(root *api.Node, data map[string]interface{}) *api.Node {
+func merge(root *api.Node, key string, val interface{}) *api.Node {
+	currentNode := root
+	parsedval, _ := strconv.ParseInt(val.(string), 10, 32)
+	if parsedval == 0 {
+		fmt.Printf("-----ALERT!!! ZERO VALUE DETECTED-----\n")
+	}
+	stackLines := strings.Split(key, "*")
+	for i, stackLine := range stackLines {
+		nodeForLine := findNode(currentNode, stackLine)
+		if i == len(stackLines)-1 {
+			nodeForLine.Value = parsedval
 		}
+		currentNode = nodeForLine
 	}
 	return root
 }
