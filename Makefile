@@ -31,14 +31,18 @@ lint:
                 --tests ./...
 	@ echo
 
+generate: pkg/visualizer/visualizer-packr.go
 
 $(COLLECTOR): fmt vet lint
 	GO111MODULE=on $(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/collector
 
-$(VISUALIZER): fmt vet lint
+pkg/visualizer/visualizer-packr.go:
+	cd pkg/visualizer; $(PACKR2)
+
+$(VISUALIZER): fmt vet lint generate
 	GO111MODULE=on $(GO) build -ldflags "-X main.VERSION=${VERSION}" github.com/gargath/flameblock/cmd/visualizer
 
-docker-build: fmt vet lint
+docker-build: fmt vet lint generate
 	docker build --build-arg VERSION=${VERSION} -t ${IMG_PREFIX}-collector:${VERSION} -f deploy/docker/collector/Dockerfile .
 	@echo "\033[36mBuilt ${IMG_PREFIX}-collector:${VERSION}\033[0m"
 	docker build --build-arg VERSION=${VERSION} -t ${IMG_PREFIX}-visualizer:${VERSION} -f deploy/docker/visualizer/Dockerfile .
@@ -57,8 +61,9 @@ docker-push:
 
 clean:
 	rm -f $(COLLECTOR) $(VISUALIZER)
+	cd pkg/visualizer; $(PACKR2) clean
 
 distclean: clean
 	rm -f ./env
 
-.PHONY: all clean distclean fmt vet lint docker-build docker-tag docker-push
+.PHONY: all clean distclean fmt vet lint docker-build docker-tag docker-push generate

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gargath/flameblock/pkg/config"
 	"github.com/go-redis/redis"
+	"github.com/gobuffalo/packr/v2"
 )
 
 // Server handles the incoming webhooks
@@ -24,7 +25,10 @@ func (s *Server) Start() error {
 	s.redis = client
 
 	http.HandleFunc("/flamedata", s.flamedata)
-	http.HandleFunc("/", s.static)
+
+	box := packr.New("static", "../../assets")
+
+	buildHTTPHandlers(box)
 	err = http.ListenAndServe(s.Config.BindAddr, nil)
 	return fmt.Errorf("Error during ListenAndServe: %v", err)
 }

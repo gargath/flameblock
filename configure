@@ -119,8 +119,10 @@ check_for shasum
 check_for go
 check_for golangci-lint
 check_for goimports
+check_for packr2
 check_go_version
 check_go_env
+
 
 cat <<- EOF > .env
 MAKE := ${tools[make]}
@@ -130,6 +132,7 @@ GO := ${tools[go]}
 GOVERSION := $GO_VERSION
 LINTER := ${tools[golangci-lint]}
 GOIMPORTS := ${tools[goimports]}
+PACKR2 := ${tools[packr2]}
 EOF
 
 echo "Environment configuration written to .env"
