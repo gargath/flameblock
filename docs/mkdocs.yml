@@ -1,0 +1,17 @@
+site_name: Flameblock Documentation
+theme:
+  name: 'material'
+
+nav:
+  - Flameblock:
+    - Introduction: index.md
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.3.1/dist/mermaid.min.js

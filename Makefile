@@ -47,17 +47,20 @@ docker-build: fmt vet lint generate
 	@echo "\033[36mBuilt ${IMG_PREFIX}-collector:${VERSION}\033[0m"
 	docker build --build-arg VERSION=${VERSION} -t ${IMG_PREFIX}-visualizer:${VERSION} -f deploy/docker/visualizer/Dockerfile .
 	@echo "\033[36mBuilt ${IMG_PREFIX}-visualizer:${VERSION}\033[0m"
+	docker build --build-arg VERSION=${VERSION} -t ${IMG_PREFIX}-docs:${VERSION} -f deploy/docker/docs/Dockerfile .
+	@echo "\033[36mBuilt ${IMG_PREFIX}-docs:${VERSION}\033[0m"
 
 TAGS ?= latest
 docker-tag:
 	@IFS=","; tags=${TAGS}; for tag in $${tags}; do docker tag ${IMG_PREFIX}-collector:${VERSION} ${IMG_PREFIX}-collector:$${tag}; echo "\033[36mTagged $(IMG_PREFIX)-collector:$(VERSION) as $${tag}\033[0m"; done
 	@IFS=","; tags=${TAGS}; for tag in $${tags}; do docker tag ${IMG_PREFIX}-visualizer:${VERSION} ${IMG_PREFIX}-visualizer:$${tag}; echo "\033[36mTagged $(IMG_PREFIX)-visualizer:$(VERSION) as $${tag}\033[0m"; done
+	@IFS=","; tags=${TAGS}; for tag in $${tags}; do docker tag ${IMG_PREFIX}-docs:${VERSION} ${IMG_PREFIX}-docs:$${tag}; echo "\033[36mTagged $(IMG_PREFIX)-docs:$(VERSION) as $${tag}\033[0m"; done
 
 PUSH_TAGS ?= ${VERSION},latest
 docker-push:
 	@IFS=","; tags=${PUSH_TAGS}; for tag in $${tags}; do docker push ${IMG_PREFIX}-collector:$${tag}; echo "\033[36mPushed $(IMG_PREFIX)-collector:$${tag}\033[0m"; done
 	@IFS=","; tags=${PUSH_TAGS}; for tag in $${tags}; do docker push ${IMG_PREFIX}-visualizer:$${tag}; echo "\033[36mPushed $(IMG_PREFIX)-visualizer:$${tag}\033[0m"; done
-
+	@IFS=","; tags=${PUSH_TAGS}; for tag in $${tags}; do docker push ${IMG_PREFIX}-docs:$${tag}; echo "\033[36mPushed $(IMG_PREFIX)-docs:$${tag}\033[0m"; done
 
 clean:
 	rm -f $(COLLECTOR) $(VISUALIZER)
