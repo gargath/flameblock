@@ -4,8 +4,6 @@ FROM polinux/mkdocs:1.0.4 as builder
 COPY docs/ /workdir
 
 RUN pip install pymdown-extensions mkdocs-material
-RUN pwd
-RUN ls -la
 RUN mkdocs build
 
 
