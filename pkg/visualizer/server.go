@@ -1,4 +1,4 @@
-package collector
+package visualizer
 
 import (
 	"fmt"
@@ -23,7 +23,8 @@ func (s *Server) Start() error {
 	}
 	s.redis = client
 
-	http.HandleFunc("/hook", s.hook)
+	http.HandleFunc("/flamedata", s.flamedata)
+	http.HandleFunc("/", s.static)
 	err = http.ListenAndServe(s.Config.BindAddr, nil)
 	return fmt.Errorf("Error during ListenAndServe: %v", err)
 }

@@ -24,16 +24,16 @@ func (s *Server) hook(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	fmt.Printf("Handling Hook (Blocked For: %d)\n", hook.BlockedFor)
-	go s.transformAndStore(hook.Stack)
+	go s.transformAndStore(hook.Stack, hook.BlockedFor)
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func (s *Server) transformAndStore(stack string) {
+func (s *Server) transformAndStore(stack string, blockedFor int64) {
 	lines := transformStack(stack)
 	var key strings.Builder
 	for i, line := range lines {
 		key.WriteString(line)
-		_, err := s.redis.Incr(key.String()).Result()
+		_, err := s.redis.IncrBy(key.String(), blockedFor).Result()
 		if err != nil {
 			fmt.Printf("ERROR: Failed to increment Redis key ('%s'): %v", key.String(), err)
 			return

@@ -1,4 +1,4 @@
-package collector
+package config
 
 // Configuration contains the command line arguments passed to collector
 type Configuration struct {
@@ -6,4 +6,5 @@ type Configuration struct {
 	SentinelAddrs  []string
 	SentinelMaster string
 	RedisAddr      string
+	BindAddr       string
 }

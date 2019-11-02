@@ -7,7 +7,7 @@ type NsolidHook struct {
 	Agents     []Agent  `json:"agents"`
 	Config     Config   `json:"config"`
 	Assets     []string `json:"assets"`
-	BlockedFor int      `json:"blockedFor"`
+	BlockedFor int64    `json:"blockedFor"`
 	Stack      string   `json:"stack"`
 	Threshold  int      `json:"threshold"`
 }
@@ -48,4 +48,12 @@ type ConfigAction struct {
 	Url  string `json:"url"`
 	Type string `json:"type"`
 	Id   string `json:"id"`
+}
+
+// Flamegraph data
+
+type Node struct {
+	Name     string  `json:"name"`
+	Value    int64   `json:"value"`
+	Children []*Node `json:"children,omitempty"`
 }
