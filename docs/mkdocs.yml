@@ -1,14 +1,20 @@
 site_name: Flameblock Documentation
-theme:
+theme: 
   name: 'material'
+  palette:
+    primary: 'teal'
+    accent: 'orange'
+  logo:
+    icon: 'assessment'
 
 nav:
   - Introduction: index.md
   - Solution Considerations: considerations.md
   - Architecture: arch.md
-  - Examples: examples.md
+  - Source Code and Deployment: examples.md
 
 markdown_extensions:
+  - markdown_include.include
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

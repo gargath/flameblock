@@ -1,9 +1,11 @@
 FROM polinux/mkdocs:1.0.4 as builder
 
+ARG VERSION="undefined"
 
 COPY docs/ /workdir
 
-RUN pip install pymdown-extensions mkdocs-material
+RUN pip install pymdown-extensions mkdocs-material markdown-include
+RUN echo "_Documentation Version: ${VERSION}_" > docs/versioninfo.md
 RUN mkdocs build
 
 

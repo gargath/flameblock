@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blocktown
+  namespace: flameblock
+spec:
+  selector:
+    matchLabels:
+      app: blocktown
+      component: core
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: blocktown
+        component: core
+    spec:
+      containers:
+      - name: blocktown
+        image: gargath/blocktown:latest
+        imagePullPolicy: Always
+        env:
+        - name: NODE_OPTIONS
+          value: "--stack-trace-limit=1000"
+        - name: NODE_DEBUG
+          value: nsolid
+        - name: NSOLID_APPNAME
+          value: blocktown
+        - name: NSOLID_COMMAND
+          value: nsolid-console:9001
+        - name: NSOLID_DATA
+          value: nsolid-console:9002
+        - name: NSOLID_BULK
+          value: nsolid-console:9003
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: 200m
+            memory: 250Mi
+          limits:
+            cpu: 200m
+            memory: 250Mi

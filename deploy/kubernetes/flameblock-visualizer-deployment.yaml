@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flameblock-visualizer
+  namespace: flameblock
+spec:
+  selector:
+    matchLabels:
+      app: flameblock
+      component: visualizer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flameblock
+        component: visualizer
+    spec:
+      containers:
+      - name: visualizer
+        image: gargath/flameblock-visualizer:latest
+        args:
+        - --redis-sentinel-master=mymaster
+        - --redis-sentinels=rfs-flameblock-redis:26379
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 150Mi
+          limits:
+            cpu: 100m
+            memory: 150Mi

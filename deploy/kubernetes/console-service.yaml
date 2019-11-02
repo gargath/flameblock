@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nsolid-console
+  namespace: flameblock
+spec:
+  selector:
+    app: nsolid
+    component: console
+  ports:
+  - protocol: TCP
+    port: 6753
+    targetPort:  6753
+    name: console
+  - protocol: TCP
+    port: 9001
+    targetPort:  9001
+    name: nsolid-command
+  - protocol: TCP
+    port: 9002
+    targetPort:  9002
+    name: nsolid-data
+  - protocol: TCP
+    port: 9003
+    targetPort:  9003
+    name: nsolid-bulk
+  type: ClusterIP

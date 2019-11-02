@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flameblock-docs
+  namespace: flameblock
+spec:
+  selector:
+    matchLabels:
+      app: flameblock
+      component: docs
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flameblock
+        component: docs
+    spec:
+      containers:
+      - name: docs
+        image: gargath/flameblock-docs:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 150Mi
+          limits:
+            cpu: 100m
+            memory: 150Mi

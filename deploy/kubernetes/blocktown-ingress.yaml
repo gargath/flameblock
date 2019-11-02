@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: blocktown
+  namespace: flameblock
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/rewrite-target: "/$1"
+spec:
+  rules:
+  - host: blocktown.g.lightweaver.info
+    http:
+      paths:
+      - path: /?(.*)
+        backend:
+          serviceName: blocktown
+          servicePort: 3000

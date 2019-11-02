@@ -1,0 +1,27 @@
+apiVersion: databases.spotahome.com/v1
+kind: RedisFailover
+metadata:
+  name: flameblock-redis
+  namespace: flameblock
+  labels:
+    app: flameblock
+    component: redis
+spec:
+  sentinel:
+    replicas: 3
+    resources:
+      requests:
+        cpu: 100m
+        memory: 40Mi
+      limits:
+        cpu: 100m
+        memory: 400Mi
+  redis:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+      limits:
+        cpu: 400m
+        memory: 500Mi

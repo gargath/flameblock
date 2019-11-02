@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nsolid-console
+  namespace: flameblock
+spec:
+  selector:
+    matchLabels:
+      app: nsolid
+      component: console
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nsolid
+        component: console
+    spec:
+      volumes:
+      - name: console-data
+        persistentVolumeClaim:
+          claimName: nsolid-console
+      containers:
+      - name: console
+        securityContext:
+          runAsUser: 0
+        image: nodesource/nsolid-console:carbon-latest
+        imagePullPolicy: Always
+        env:
+        - name: NODE_OPTIONS
+          value: "--stack-trace-limit=1000"
+        - name: NODE_DEBUG
+          value: nsolid
+        - name: NSOLID_CONSOLE_LICENSE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: nsolid-license
+              key: license
+        volumeMounts:
+        - mountPath: /var/lib/nsolid/console
+          name: console-data
+        ports:
+        - containerPort: 6753
+        - containerPort: 9001
+        - containerPort: 9002
+        - containerPort: 9002
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 6753
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 6753
+            scheme: HTTP
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 250m
+            memory: 500Mi
+          limits:
+            cpu: 250m
+            memory: 500Mi

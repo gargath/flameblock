@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redisoperator
+  name: redisoperator
+  namespace: flameblock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redisoperator
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: redisoperator
+    spec:
+      serviceAccountName: redisoperator
+      containers:
+        - image: quay.io/spotahome/redis-operator:v1.0.0-rc.1
+          imagePullPolicy: IfNotPresent
+          name: app
+          resources:
+            limits:
+              cpu: 100m
+              memory: 50Mi
+            requests:
+              cpu: 10m
+              memory: 50Mi
+      restartPolicy: Always
