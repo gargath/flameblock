@@ -14,6 +14,7 @@ var extensionToContentType = map[string]string{
 	".css":  "text/css",
 }
 
+// buildHTTPHandlers constructs and registers http.HandleFuncs for all assets contained in the box
 func buildHTTPHandlers(box *packr.Box) {
 
 	list := box.List()

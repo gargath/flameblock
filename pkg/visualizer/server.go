@@ -43,6 +43,7 @@ func (s *Server) Start() error {
 	return fmt.Errorf("Error during ListenAndServe: %v", err)
 }
 
+// redisClientFromConfig builds the redis client with the configuration provided
 func redisClientFromConfig(c config.Configuration) (*redis.Client, error) {
 	var r *redis.Client
 	if c.UseSentinel {

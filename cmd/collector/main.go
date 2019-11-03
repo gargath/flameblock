@@ -39,6 +39,7 @@ func main() {
 		Config: *config,
 	}
 
+	// Start the server
 	err := c.Start()
 	if err != nil {
 		fmt.Printf("Error starting server: %s\n", err)
@@ -46,6 +47,7 @@ func main() {
 	}
 }
 
+// validateConfig validates the provided command-line options and builds the config struct
 func validateConfig() (*config.Configuration, error) {
 	config := &config.Configuration{}
 	if *redisUseSentinel {

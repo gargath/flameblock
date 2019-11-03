@@ -47,6 +47,7 @@ func main() {
 	}
 }
 
+// validateConfig validates the provided command-line options and builds the config struct
 func validateConfig() (*config.Configuration, error) {
 	config := &config.Configuration{}
 	if *redisUseSentinel {
