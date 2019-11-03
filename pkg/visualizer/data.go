@@ -12,6 +12,8 @@ import (
 
 func (s *Server) flamedata(rw http.ResponseWriter, req *http.Request) {
 
+	_, fudge := req.URL.Query()["normalize"]
+
 	var cursor uint64
 
 	flamedata := &api.Node{
@@ -41,7 +43,7 @@ func (s *Server) flamedata(rw http.ResponseWriter, req *http.Request) {
 			fmt.Printf("Processing %d keys\n", len(keys))
 			for i, key := range keys {
 				fmt.Printf("Merging key %s with value %v\n", key, values[i])
-				flamedata = merge(flamedata, key, values[i])
+				flamedata = merge(flamedata, key, values[i], fudge)
 			}
 		}
 		if cursor == 0 {
@@ -62,7 +64,7 @@ func (s *Server) flamedata(rw http.ResponseWriter, req *http.Request) {
 }
 
 //func merge(root *api.Node, data map[string]interface{}) *api.Node {
-func merge(root *api.Node, key string, val interface{}) *api.Node {
+func merge(root *api.Node, key string, val interface{}, fudge bool) *api.Node {
 	currentNode := root
 	parsedval, _ := strconv.ParseInt(val.(string), 10, 32)
 	if parsedval == 0 {
@@ -70,6 +72,9 @@ func merge(root *api.Node, key string, val interface{}) *api.Node {
 	}
 	stackLines := strings.Split(key, "*")
 	for i, stackLine := range stackLines {
+		if fudge && strings.Contains(stackLine, "node_modules") {
+			continue
+		}
 		nodeForLine := findNode(currentNode, stackLine)
 		if i == len(stackLines)-1 {
 			nodeForLine.Value = parsedval

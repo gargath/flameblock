@@ -79,6 +79,12 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/spiermar/d3-flame-graph@2.0.3/dist/d3-flamegraph.min.js"></script>
 
     <script type="text/javascript">
+    var dataSource = "/flamedata";
+    params = new URLSearchParams(window.location.search);
+    if (params.has('normalize')) {
+      dataSource = dataSource.concat("?normalize");
+    }
+
     var flameGraph = d3.flamegraph()
       .width(960)
       .cellHeight(18)
@@ -115,7 +121,7 @@
     // Example of how to set fixed chart height
     // flameGraph.height(540);
 
-    d3.json("/flamedata", function(error, data) {
+    d3.json(dataSource, function(error, data) {
       if (error) return console.warn(error);
       d3.select("#chart")
           .datum(data)
