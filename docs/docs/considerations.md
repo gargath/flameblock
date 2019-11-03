@@ -6,6 +6,10 @@ In particular, separating library code from user code is difficult without that 
 
 Since flamegraphs are visual and interactive, they offer a good user experience for developer who can then draw their own conclusions from the data.
 
+Because of the difficulty encountered in getting complete stack traces from nsolid, I included the option to eliminate any stack frame from within `node_modules` from
+the data used to generate the graph.
+While this is not 100% accurate, it makes the resulting graphs more useful, provided that the assumption of common ancestry holds.
+
 
 ## Technology Choices
 

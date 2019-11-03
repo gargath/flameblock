@@ -79,8 +79,14 @@ The collector is not exposed externally. It is only available to the console ins
 
 The visualizer exposes two endpoints via Kubernetes Ingress:
 
-* [`/index.html`](http://flameblock.g.lightweaver.info/index.html) for the static web page
+* [`/index.html?normalize`](http://flameblock.g.lightweaver.info/index.html?normalize) for the static web page
 and
+* [`/flamedata?normalize`](http://flameblock.g.lightweaver.info/flamedata?normalize) for the dynamically generated data used to render the graph
+
+
+Both can be accessed without the `normalize` parameter to include `node_modules` stack frames:
+
+* [`/index.html`](http://flameblock.g.lightweaver.info/index.html) for the static web page
 * [`/flamedata`](http://flameblock.g.lightweaver.info/flamedata) for the dynamically generated data used to render the graph
 
 The data can be retrieved directly using cURL:
