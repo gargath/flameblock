@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: collector
-        image: gargath/flameblock-collector:latest
+        image: gargath/flameblock-collector:v0.2
         args:
         - --redis-sentinel-master=mymaster
         - --redis-sentinels=rfs-flameblock-redis:26379

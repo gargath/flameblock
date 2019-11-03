@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: visualizer
-        image: gargath/flameblock-visualizer:latest
+        image: gargath/flameblock-visualizer:v0.2
         args:
         - --redis-sentinel-master=mymaster
         - --redis-sentinels=rfs-flameblock-redis:26379
